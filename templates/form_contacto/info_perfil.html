@@ -1,0 +1,176 @@
+{% extends '../layout/base.html' %}
+{% load static %}
+{% block title %} Formulario Datos Ulagos{% endblock title %}
+
+{%block titulo %} ACTUALIZA TUS DATOS DE CONTACTO PARA EL PROCESO DE MATRICULA EN LINEA AÑO ACADEMICO 2023 {%endblock %}
+
+{% block content %}
+
+{% if data.CAMPUS%}
+
+<div class="card card-widget widget-user shadow">
+
+    <div class="widget-user-header bg-primary">
+        <h3 class="widget-user-username">{{data.NOMBRES}} </h3>
+        <h5 class="widget-user-desc">{{data.APE_PATERNO}} {{data.APE_MATERNO}}</h5>
+    </div>
+    <div class="widget-user-image">
+        <img class="img-circle elevation-2" src="{% static 'img/logo_128.png'%}" alt="User Avatar">
+    </div>
+    <div class="card-footer">
+        <div class="row">
+            <div class="col-sm-4 border-right">
+                <div class="description-block">
+                    <h5 class="description-header">CAMPUS - CARRERA</h5>
+                    <span class="description-text">{{data.CAMPUS}} - {{data.COD_CARRERA}}</span>
+                </div>
+
+            </div>
+
+            <div class="col-sm-4 border-right">
+                <div class="description-block">
+                    <h5 class="description-header">{{data.RUT}} - {{data.PERS_DV}} </h5>
+                    <span class="description-text">Universidad de Los Lagos</span>
+                </div>
+
+            </div>
+
+            <div class="col-sm-4">
+                <div class="description-block">
+                    <h5 class="description-header">FECHA NACIMIENTO </h5>
+                    <span class="description-text"> {{ data.FECHA_NACIMIENTO|date:"d / w / Y" }} </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endif %}
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">Información Actual</h3>
+    </div>
+
+    <div class="card-body">
+        <form name='formulario_contacto' method='POST' action='{% url "guardar" %}'> {% csrf_token %}
+            <input type='hidden' name='RUT' value='{{data.RUT}}' />
+            <input type='hidden' name='nombres' value='{{data.NOMBRES}}' />
+            <input type='hidden' name='apellidos' value='{{data.APE_PATERNO}} {{data.APE_MATERNO}}' />
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <div class="form-group">
+                        <label>INGRESE SU TELEFONO PERSONAL</label>
+                        <input type="text" name="TELEFONO1" class="form-control" value="{{data.TELEFONO1}} "
+                            placeholder="+56 9 12345678  ...">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>INGRESE OTRO TELEFONO DE CONTACTO (De algún familiar directo)</label>
+
+                        <input type="text" name="TELEFONO2" class="form-control" value="{{data.TELEFONO2}} " required
+                            placeholder="+56 9 12345678 ...">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+
+                    <div class="form-group">
+                        <label>INGRESE DIRECCION PARTICULAR (Dirección de origen)</label>
+                        <p><small>Nombre calle, pasaje, villa, población, sector</small></p>
+                        <textarea class="form-control" name="DIRECCION" rows="3" required
+                            placeholder="Dirección de origen ...">{{data.DIRECCION}}</textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label class="col-form-label" for="inputSuccess">INGRESE NUMERO
+                            DIRECCION </label>
+                        <input type="text" name="DIRECCION_NUMERO" class="form-control" id="inputSuccess"
+                            required value="{{data.DIRECCION_NUMERO}}" placeholder="NUMERO ...">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Región</label>
+
+                        <select name="COD_REGION" id="region" class="form-control" onchange="cambiar_comunas()">
+                            {% for d in regiones %}{% if data.COD_REGION == d.0 %}<option value="{{d.0}}">{{d.1}}
+                            </option>{% endif %}{% endfor %}
+                            {% for r in regiones %}
+                            <option value="{{r.0}}">{{r.1}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Comuna</label>
+                        <select name="COD_COMUNA" id="comuna" class="form-control" required >
+                        {% if comuna_destino %}
+                            {% for c in comuna_destino  %}
+                            <option value="{{c.0}}">{{c.1}}</option>
+                            {% endfor %}
+                        {%endif%}
+                    </select>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>INGRESE SU CORREO PERSONAL</label>
+                        <p><small>distinto al correo institucional @alumnos.ulagos.cl</small></p>
+                        <input type="text" name="CORREO_PARTICULAR" class="form-control"
+                            value="{{data.CORREO_PARTICULAR}}" placeholder="Correo Personal ...">
+                    </div>
+                </div>
+            </div>
+
+    </div>
+
+</div>
+
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <h5 class="card-title m-0">Enviar Datos Personales</h5>
+    </div>
+    <div class="card-body">
+        <h6 class="card-title">Por favor revise sus datos cuidadosamente y actualice los que no correspondan</h6>
+
+        <p class="card-text">Recuerde Guardar y Enviar sus datos</p>
+        <button type="submit" class="btn btn-primary ">Guardar y Enviar</button>
+
+    </div>
+</div>
+</form>
+<script>
+    function cambiar_comunas() {
+        let region = document.getElementById('region').value;
+        let url = 'comuna/?region=' + region;
+
+        fetch(url)
+            .then(function (result) {
+                return result.text();
+            })
+            .then(function (result) {
+                document.getElementById('comuna').innerHTML = result;
+            });
+    }
+</script>
+{% endblock content %}

@@ -1,0 +1,18 @@
+
+{% if form.errors %}
+<div class="alert alert-danger  alert-dismissible fade show" role="alert">
+    <div class="container">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <p>hay errores en el formulario {{ form.errors }}</p>
+    </div>
+</div>
+{% endif %} 
+    {% if messages %} 
+        {% for msg in messages %}
+        
+            <div class="alert {% if msg.level_tag == 'error' %}alert-danger {% else %} alert-{{msg.level_tag}}  {% endif %}   alert-dismissible fade show" role="alert">
+                <strong> </strong>{{msg.message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> 
+            </div>
+        {% endfor %} 
+    {% endif %}

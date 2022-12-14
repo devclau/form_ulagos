@@ -1,0 +1,122 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token }}" />
+    <title>Login Universidad de Los Lagos</title>
+    <!--<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/adminlte.min.css' %} ">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+
+    <style>
+        body {
+            background: url({% static 'img/patron-08.svg' %}) repeat fixed 0 0;
+            background-size: auto;
+            position: relative;
+            text-shadow: none !important;
+            color: #555;
+            padding-top: 25px;
+        }
+
+
+        .login-page,
+        .register-page {
+            -ms-flex-align: center;
+            align-items: center;
+            background-color: #e9ecef;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            height: 70vh;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <script src="https://www.google.com/recaptcha/api.js?render={{site_key}}"></script>
+    <script>
+      grecaptcha.ready(function() {
+       $('#contactform').submit(function(e){
+              var form = this;
+              e.preventDefault()
+              grecaptcha.execute('{{site_key}}', {action: 'contactform'}).then(function(token) {
+                 $('#recaptcha').val(token)
+                form.submit()
+              });
+          })
+        });
+     </script>
+    
+</head>
+
+<body class="hold-transition login-page">
+    
+    {% include '../layout/mensajes.html' %}
+
+
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="https://www.ulagos.cl"><b>ULAGOS</b> 2023</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Actualiza los Datos de contacto </p>
+                <form action="{% url 'login'%}" method="post" name='contactform' id='contactform'>  {% csrf_token %} 
+                    <div class=" mb-3">
+                        <div class="row">
+                            <div class="col-10">
+                                {{form.RUT}}
+                            </div>
+                            <div class="col-2">
+                                {{form.DV}}
+                            </div>
+                        </div>
+                      </div>
+                    <div class="input-group mb-3">
+                       <!--Input captcha-->
+                       <input type="hidden" name="g-recaptcha-response" id='recaptcha'>
+                       <!--/Input captcha-->
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+                        </div>
+
+                        <div class="col-8">
+
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <script src="{% static 'plugins/jquery/jquery.min.js' %} "></script>
+
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %} "></script>
+
+    <script src="{% static 'js/adminlte.min.js' %}"></script>
+</body>
+
+</html>
