@@ -26,10 +26,11 @@ class FormularioContacto(ModelForm):
     COD_COMUNA = forms.CharField(required=True)
     DIRECCION_NUMERO = forms.CharField(required=True)
     CORREO_PARTICULAR = forms.CharField(required=True)
+    OBSERVACIONES = forms.CharField(required=False,widget=forms.Textarea(attrs={'maxlength':255}))
 
     class Meta:
         model = T_UGC_ACTUALIZA_ANTECEDENTES
-        fields = ['RUT', 'TELEFONO1', 'TELEFONO2', 'DIRECCION','DIRECCION_NUMERO','CORREO_PARTICULAR','COD_REGION', 'COD_COMUNA']
+        fields = ['RUT', 'TELEFONO1', 'TELEFONO2', 'DIRECCION','DIRECCION_NUMERO','CORREO_PARTICULAR','COD_REGION', 'COD_COMUNA', 'OBSERVACIONES']
 
 
 #class FormSisAccesoFuncional(forms.ModelForm):

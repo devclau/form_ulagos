@@ -48,9 +48,12 @@
     </div>
 </div>
 {% endif %}
+
+
+
 <div class="card card-primary">
     <div class="card-header">
-        <h3 class="card-title">Información Actual</h3>
+        <h3 class="card-title">Por favor revise sus datos cuidadosamente y actualice sólo los que no correspondan.</h3>
     </div>
 
     <div class="card-body">
@@ -106,11 +109,15 @@
                         <label>Región</label>
 
                         <select name="COD_REGION" id="region" class="form-control" onchange="cambiar_comunas()">
-                            {% for d in regiones %}{% if data.COD_REGION == d.0 %}<option value="{{d.0}}">{{d.1}}
-                            </option>{% endif %}{% endfor %}
-                            {% for r in regiones %}
-                            <option value="{{r.0}}">{{r.1}}</option>
-                            {% endfor %}
+                            {% if region_comuna_destino %}
+                                {% for c in region_comuna_destino  %}
+                                    <option value="{{c.2}}">{{c.3}}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="00">Sin Región</option>
+                            {%endif%}
+
+                            {% for r in regiones %} <option value="{{r.0}}">{{r.1}}</option> {% endfor %}
                         </select>
                     </div>
 
@@ -119,8 +126,8 @@
                     <div class="form-group">
                         <label>Comuna</label>
                         <select name="COD_COMUNA" id="comuna" class="form-control" required >
-                        {% if comuna_destino %}
-                            {% for c in comuna_destino  %}
+                        {% if region_comuna_destino %}
+                            {% for c in region_comuna_destino  %}
                             <option value="{{c.0}}">{{c.1}}</option>
                             {% endfor %}
                         {%endif%}
@@ -142,17 +149,25 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-form-label" for="inputSuccess">OBSERVACIONES </label>
+                        <textarea name="OBSERVACIONES" maxlength="255" class="form-control" rows="3"  placeholder="Si necesita corregir datos no modificables como Nombre , Fecha de nacimiento, por favor indicar acá.">{% if data.OBSERVACIONES  is not None %}{{data.OBSERVACIONES}}{%endif%}</textarea>
+                    </div>
+                </div>
+
+            </div>
+
     </div>
 
 </div>
 
 <div class="card card-primary card-outline">
     <div class="card-header">
-        <h5 class="card-title m-0">Enviar Datos Personales</h5>
+        <h5 class="card-title m-0">Enviar Datos Personales Actualizados</h5>
     </div>
     <div class="card-body">
-        <h6 class="card-title">Por favor revise sus datos cuidadosamente y actualice los que no correspondan</h6>
-
         <p class="card-text">Recuerde Guardar y Enviar sus datos</p>
         <button type="submit" class="btn btn-primary ">Guardar y Enviar</button>
 

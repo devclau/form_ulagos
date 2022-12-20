@@ -11,15 +11,14 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import cx_Oracle
+
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-import cx_Oracle
-import sys
-import os
-
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+cx_Oracle.init_oracle_client(lib_dir=r"C:\oracle\instantclient_21_7")
 #cx_Oracle.init_oracle_client(lib_dir=r"/opt/oracle/instantclient_21_8/")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -28,9 +27,9 @@ import os
 SECRET_KEY = 'django-insecure-y!b99@uk8zt0r887n$(b!oyst&ids-xy-%y%qapy5609p_*ut!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['10.0.10.19']
+ALLOWED_HOSTS = []
 
 RECAPTCHA_SITE_KEY = "6LeQkGAjAAAAAI0eEjXpmSLOL4y9jtWnZHB3W5-C"
 RECAPTCHA_SECRET_KEY = "6LeQkGAjAAAAAE1es90AuXEGz0bMVFm4mCo07zU5"
@@ -67,7 +66,7 @@ ROOT_URLCONF = 'form_ulagos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,10 +131,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+#PARA LINUX
+
+#STATIC_URL = '/static/'
+#STATIC_ROOT = (
+#    os.path.join(BASE_DIR, 'static'),
+#)
+
+#PARA WINDOWS
+STATIC_ROOT = ''
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+STATICFILES_DIRS = ('static',)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

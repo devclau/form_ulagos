@@ -1,8 +1,6 @@
-
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
+    {% load static %}
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,7 +21,7 @@
 
     <style>
         body {
-            background: url({% static 'img/patron-08.svg' %}) repeat fixed 0 0;
+            background: url({% static 'img/patron-08.svg'%}) repeat fixed 0 0;
             background-size: auto;
             position: relative;
             text-shadow: none !important;
@@ -69,7 +67,9 @@
     
     {% include '../layout/mensajes.html' %}
 
-
+    <div class="widget-user-image">
+        <img class="img-circle elevation-2" src="{% static 'img/logo_128.png'%}" alt="User Avatar">
+    </div>
     <div class="login-box">
         <div class="login-logo">
             <a href="https://www.ulagos.cl"><b>ULAGOS</b> 2023</a>

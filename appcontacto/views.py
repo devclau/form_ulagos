@@ -29,8 +29,9 @@ def login_contacto(request):
 
         if form.is_valid():
             PERS_COD = form.cleaned_data["RUT"]
+            PERS_DV = form.cleaned_data["DV"]
             reg  = regiones()
-            comuna_destino = comuna_seleccionada(PERS_COD)
+            region_comuna_destino = region_comuna_seleccionada(PERS_COD)
            
             with connection.cursor() as cursor:
                 try:
@@ -49,7 +50,7 @@ def login_contacto(request):
                         "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."DIRECCION_NUM_PARTICULAR" AS DIRECCION_NUMERO,
                         "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."EMAIL_PERSONAL" AS CORREO_PARTICULAR
                         FROM "DELFOS"."BIE_MATRICULA_ANTECEDENTES"
-                        WHERE "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."PERS_COD" = {PERS_COD}"""
+                        WHERE "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."PERS_COD" = {PERS_COD} AND "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."PERS_DV" = {PERS_DV} """
                         cursor.execute(SQL)#ORIGEN
                     else:
                         cursor.execute(f"""Select * FROM (SELECT * FROM "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES" 
@@ -58,7 +59,7 @@ def login_contacto(request):
                         where rownum = 1""")#DESTINO
                     col_names = [desc[0] for desc in cursor.description]
                     rows = dict(zip(col_names, cursor.fetchone())) 
-                    return render(request, 'form_contacto/info_perfil.html',{'data':rows,'regiones': reg, 'comuna_destino':comuna_destino})
+                    return render(request, 'form_contacto/info_perfil.html',{'data':rows,'regiones': reg, 'region_comuna_destino':region_comuna_destino})
                 except:
                     messages.add_message(request, messages.ERROR, 'RUT no encontrado por favor vuelva a ingresar.')
                     messages.add_message(request, messages.WARNING, form.errors)
@@ -76,7 +77,7 @@ def guardar(request):
         nombres = request.POST['nombres']
         apellidos = request.POST['apellidos']
         RUT = request.POST['RUT']
-        form = FormularioContacto(request.POST or None)
+        form = FormularioContacto(request.POST)
         if form.is_valid():
             
             alumno = T_UGC_ACTUALIZA_ANTECEDENTES(
@@ -88,6 +89,7 @@ def guardar(request):
                 COD_COMUNA = form.cleaned_data['COD_COMUNA'],
                 DIRECCION_NUMERO = form.cleaned_data['DIRECCION_NUMERO'],
                 CORREO_PARTICULAR = form.cleaned_data['CORREO_PARTICULAR'],
+                OBSERVACIONES = form.cleaned_data['OBSERVACIONES'],
             )
             alumno.save()
             messages.add_message(request,messages.SUCCESS, f'Datos guardados por:   {nombres} {apellidos} {RUT}  ')
@@ -149,14 +151,13 @@ def regiones_comunas(request):
             cursor.close
 
 
-def comuna_seleccionada(perscod):
+def region_comuna_seleccionada(perscod):
     with connection.cursor() as cursor:
         try:
-            SQL = f""" SELECT  DELFOS.GLO_COMUNAS.COMU_COD , DELFOS.GLO_COMUNAS.COMU_DES, DELFOS.GLO_COMUNAS.COMU_REGION 
+            SQL = f"""SELECT DELFOS.GLO_COMUNAS.COMU_COD , DELFOS.GLO_COMUNAS.COMU_DES, DELFOS.GLO_COMUNAS.COMU_REGION, DELFOS.GLO_REGIONES.REGI_DES
                 FROM DELFOS.GLO_COMUNAS
-                INNER JOIN DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES ON DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES.COD_COMUNA = DELFOS.GLO_COMUNAS.COMU_COD
-                WHERE DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES.RUT = {perscod} AND  
-                DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES.FECHA_REGISTRO  = (SELECT MAX (DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES.FECHA_REGISTRO) FROM DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES)"""
+                INNER JOIN DELFOS.GLO_REGIONES  ON DELFOS.GLO_REGIONES.REGI_COD = DELFOS.GLO_COMUNAS.COMU_REGION 
+                INNER JOIN DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES ON DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES.COD_COMUNA = DELFOS.GLO_COMUNAS.COMU_COD WHERE DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES.RUT = {perscod} AND  DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES.FECHA_REGISTRO  = (SELECT MAX (DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES.FECHA_REGISTRO) FROM DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES)"""
             
             cursor.execute(SQL)
             comuna_seleccionada = cursor.fetchall()

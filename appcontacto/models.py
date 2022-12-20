@@ -11,6 +11,7 @@ class T_UGC_ACTUALIZA_ANTECEDENTES(models.Model):
     COD_COMUNA = models.CharField(max_length=10)
     CORREO_PARTICULAR=models.CharField(max_length=200)
     FECHA_REGISTRO = models.DateTimeField(auto_now_add=True)
+    OBSERVACIONES = models.CharField(max_length=255,null=True, blank=True)
 
     class Meta:
         db_table = '"DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES"'
