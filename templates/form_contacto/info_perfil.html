@@ -59,6 +59,7 @@
     <div class="card-body">
         <form name='formulario_contacto' method='POST' action='{% url "guardar" %}'> {% csrf_token %}
             <input type='hidden' name='RUT' value='{{data.RUT}}' />
+            <input type='hidden' name='DV' value='{{data.DV}}' />
             <input type='hidden' name='nombres' value='{{data.NOMBRES}}' />
             <input type='hidden' name='apellidos' value='{{data.APE_PATERNO}} {{data.APE_MATERNO}}' />
             <div class="row">

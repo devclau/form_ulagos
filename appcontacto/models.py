@@ -3,6 +3,7 @@ from django.db import models
 
 class T_UGC_ACTUALIZA_ANTECEDENTES(models.Model):
     RUT = models.CharField(max_length=20)
+    DV = models.CharField(max_length=1)
     TELEFONO1 = models.CharField(max_length=20)
     TELEFONO2 = models.CharField(max_length=20)
     DIRECCION = models.CharField(max_length=200)

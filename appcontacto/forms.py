@@ -19,6 +19,7 @@ class FormularioLogin(forms.Form):
         
 class FormularioContacto(ModelForm):
     RUT = forms.CharField(required=True)
+    DV= forms.CharField(required=True)
     TELEFONO1 = forms.CharField()
     TELEFONO2 = forms.CharField(required=True)
     DIRECCION = forms.CharField(required=True)

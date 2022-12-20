@@ -35,9 +35,9 @@ def login_contacto(request):
            
             with connection.cursor() as cursor:
                 try:
-                    if row_count_select(PERS_COD) == 0:
+                    if row_count_select(PERS_COD, PERS_DV) == 0:
                         SQL = f"""SELECT "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."PERS_COD" AS RUT,
-                        "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."PERS_DV" AS PERS_DV,
+                        "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."PERS_DV" AS DV,
                         "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."NOMBRES" AS NOMBRES,
                         "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."APE_PATERNO" AS APE_PATERNO,
                         "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."APE_MATERNO" AS APE_MATERNO,
@@ -54,7 +54,7 @@ def login_contacto(request):
                         cursor.execute(SQL)#ORIGEN
                     else:
                         cursor.execute(f"""Select * FROM (SELECT * FROM "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES" 
-                        WHERE "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES"."RUT" = {PERS_COD}  
+                        WHERE "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES"."RUT" = {PERS_COD} AND  "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES"."DV" = {PERS_DV}
                         ORDER BY "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES"."ID" DESC  ) 
                         where rownum = 1""")#DESTINO
                     col_names = [desc[0] for desc in cursor.description]
@@ -77,11 +77,13 @@ def guardar(request):
         nombres = request.POST['nombres']
         apellidos = request.POST['apellidos']
         RUT = request.POST['RUT']
+        DV = request.POST['DV']
         form = FormularioContacto(request.POST)
         if form.is_valid():
             
             alumno = T_UGC_ACTUALIZA_ANTECEDENTES(
                 RUT  = form.cleaned_data['RUT'],
+                DV  = form.cleaned_data['DV'],
                 TELEFONO1 = form.cleaned_data['TELEFONO1'],
                 TELEFONO2 = form.cleaned_data['TELEFONO2'],
                 DIRECCION = form.cleaned_data['DIRECCION'],
@@ -92,16 +94,16 @@ def guardar(request):
                 OBSERVACIONES = form.cleaned_data['OBSERVACIONES'],
             )
             alumno.save()
-            messages.add_message(request,messages.SUCCESS, f'Datos guardados por:   {nombres} {apellidos} {RUT}  ')
+            messages.add_message(request,messages.SUCCESS, f'Datos guardados por:   {nombres} {apellidos} {RUT} - {DV} ')
             return render(request, 'form_contacto/save.html',{})
     else: 
        return HttpResponse('Usuario No autorizado!')
 
 
-def row_count_select(perscod):
+def row_count_select(perscod, dv):
     with connection.cursor() as cursor:
         try:
-            cursor.execute(f"select * from DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES WHERE RUT = {perscod}") #TABLA DESTINO
+            cursor.execute(f"select * from DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES WHERE RUT = {perscod} AND DV={dv} ") #TABLA DESTINO
             registros = len(cursor.fetchall())
             return registros   
         except DatabaseError as e:
