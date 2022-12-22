@@ -29,7 +29,8 @@ def login_contacto(request):
 
         if form.is_valid():
             PERS_COD = form.cleaned_data["RUT"]
-            PERS_DV = form.cleaned_data["DV"]
+            DV = form.cleaned_data["DV"]
+            PERS_DV = DV.upper()
             reg  = regiones()
             region_comuna_destino = region_comuna_seleccionada(PERS_COD)
            
@@ -50,11 +51,12 @@ def login_contacto(request):
                         "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."DIRECCION_NUM_PARTICULAR" AS DIRECCION_NUMERO,
                         "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."EMAIL_PERSONAL" AS CORREO_PARTICULAR
                         FROM "DELFOS"."BIE_MATRICULA_ANTECEDENTES"
-                        WHERE "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."PERS_COD" = {PERS_COD} AND "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."PERS_DV" = {PERS_DV} """
+                        WHERE "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."PERS_COD" = {PERS_COD} AND "DELFOS"."BIE_MATRICULA_ANTECEDENTES"."PERS_DV" = '{PERS_DV}' """
+                        print(SQL)
                         cursor.execute(SQL)#ORIGEN
                     else:
                         cursor.execute(f"""Select * FROM (SELECT * FROM "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES" 
-                        WHERE "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES"."RUT" = {PERS_COD} AND  "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES"."DV" = {PERS_DV}
+                        WHERE "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES"."RUT" = {PERS_COD} AND  "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES"."DV" = '{PERS_DV}'
                         ORDER BY "DELFOS"."T$UGC_ACTUALIZA_ANTECEDENTES"."ID" DESC  ) 
                         where rownum = 1""")#DESTINO
                     col_names = [desc[0] for desc in cursor.description]
@@ -103,7 +105,7 @@ def guardar(request):
 def row_count_select(perscod, dv):
     with connection.cursor() as cursor:
         try:
-            cursor.execute(f"select * from DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES WHERE RUT = {perscod} AND DV={dv} ") #TABLA DESTINO
+            cursor.execute(f"select * from DELFOS.T$UGC_ACTUALIZA_ANTECEDENTES WHERE RUT = {perscod} AND DV='{dv}' ") #TABLA DESTINO
             registros = len(cursor.fetchall())
             return registros   
         except DatabaseError as e:
